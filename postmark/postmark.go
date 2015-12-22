@@ -163,11 +163,13 @@ func (c *Client) Send(msg *Message) (*Result, error) {
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Postmark-Server-Token", c.ApiKey)
+	req.Header.Set("Connection", "close")
 
 	resp, err := (&http.Client{}).Do(req)
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	res := &Result{}
 	json.NewDecoder(resp.Body).Decode(res)
@@ -189,11 +191,13 @@ func (c *Client) SendBatch(msg []*Message) ([]*Result, error) {
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Postmark-Server-Token", c.ApiKey)
+	req.Header.Set("Connection", "close")
 
 	resp, err := (&http.Client{}).Do(req)
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
 	res := []*Result{}
 	json.NewDecoder(resp.Body).Decode(res)
